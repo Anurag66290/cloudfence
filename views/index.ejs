@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Shortener</title>
+</head>
+<body>
+    <h1>URL Shortener</h1>
+    <input type="text" id="longUrl" placeholder="Enter the long URL">
+    <button onclick="generateShortUrl()">Submit</button>
+    <br>
+    <img id="qrCode" style="display: none;">
+    <p id="shortUrl"></p>
+</body>
+<script>
+    async function generateShortUrl() {
+        const longUrl = document.getElementById("longUrl").value;
+
+        try {
+            const response = await fetch("/shorten", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ longUrl }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("shortUrl").innerText = "Short URL: " + data.shortUrl;
+                document.getElementById("qrCode").src = data.qrCode;
+                document.getElementById("qrCode").style.display = "block";
+            } else {
+                console.error("Error generating short URL.");
+            }
+        } catch (error) {
+            console.error("Error: " + error);
+        }
+    }
+</script>
+</html>
